@@ -1,0 +1,476 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data preprocessing &#8212; Writing Neural Networks: Language processing with PyTorch</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet" />
+  <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">Writing Neural Networks: Language processing with PyTorch</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="intro.html">
+   Introduction
+  </a>
+ </li>
+</ul>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="page1.html">
+   Long Short Term Memory (LSTM)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="page2.html">
+   Bidirectional LSTM (Bi-LSTM)
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/ratings.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/carimo198/neural-network-sentiment-analysis"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/carimo198/neural-network-sentiment-analysis/issues/new?title=Issue%20on%20page%20%2Fratings.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/carimo198/neural-network-sentiment-analysis/master?urlpath=tree/docs/ratings.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav" aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Data preprocessing
+   <a class="anchor" id="pre">
+   </a>
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#prediction-output-conversion-a-class-anchor-id-conv-a">
+   Prediction output conversion
+   <a class="anchor" id="conv">
+   </a>
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#recurrent-neural-network-lstm-a-class-anchor-id-rnn-a">
+   Recurrent Neural Network - LSTM
+   <a class="anchor" id="rnn">
+   </a>
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#bi-lstm-architecture-a-class-anchor-id-lstm-a">
+   Bi-LSTM architecture
+   <a class="anchor" id="lstm">
+   </a>
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#overfitting-a-class-anchor-id-fit-a">
+   Overfitting
+   <a class="anchor" id="fit">
+   </a>
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#cost-function-a-class-anchor-id-cost-a">
+   Cost function
+   <a class="anchor" id="cost">
+   </a>
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#optimiser-a-class-anchor-id-optim-a">
+   Optimiser
+   <a class="anchor" id="optim">
+   </a>
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#results-a-class-anchor-id-results-a">
+   Results
+   <a class="anchor" id="results">
+   </a>
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#references-a-class-anchor-id-ref-a">
+   References
+   <a class="anchor" id="ref">
+   </a>
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="data-preprocessing-a-class-anchor-id-pre-a">
+<h1>Data preprocessing <a class="anchor" id="pre"></a><a class="headerlink" href="#data-preprocessing-a-class-anchor-id-pre-a" title="Permalink to this headline">¶</a></h1>
+<p>The following objects are required for data preparation in sentiment analysis task when using <em>torchtext.data</em>:</p>
+<ul class="simple">
+<li><p><strong>Field</strong>: specifies how to preprocess each data column in our dataset.</p></li>
+<li><p><strong>LabelField</strong>: defines the label in the classification task.</p></li>
+</ul>
+<p>The <em>main()</em> function in <em><a class="reference external" href="http://a3main.py">a3main.py</a></em> script defines our <em>Field</em> and <em>LabelField</em> objects. We have defined the <em>Field</em> object to convert strings to lower case by passing <em>lower=True</em> argument. We have also set <em>include_length=True</em> to allow for dynamic padding by adding the lengths of the reviews to the dataset. In addition to the <em>Field</em> object, a <em>preprocessing()</em> function has been defined in <em><a class="reference external" href="http://student.py">student.py</a></em> to perform the following additional preprocessing of the data using the regular expression package, <em>re</em>:</p>
+<ul class="simple">
+<li><p>remove html mark tags</p></li>
+<li><p>remove non-ascii and digits</p></li>
+<li><p>remove unwanted characters</p></li>
+<li><p>remove extra white spaces.</p></li>
+</ul>
+<p>The <em>preprocessing()</em> function will be called after tokenising but prior to numericalising to perform the text cleaning task.</p>
+<p>The model uses Global Vectors for Word Representation (GloVe 6B) unsupervised learning algorithm for obtaining vector representation for words (Pennington et al. 2014). GloVe is used for word embedding for text where it allows for words with similar meaning to have similar representation. The dimension of the vector was chosen to be 300 as the increase in dimension allows the vector to capture more information. For this task, dimension of 300 was found to perform better when we experimented with different dimension values (50, 150, 200, 250). However, it should be noted that increases in dimension size will result in greater computational complexity.</p>
+</div>
+<div class="section" id="prediction-output-conversion-a-class-anchor-id-conv-a">
+<h1>Prediction output conversion <a class="anchor" id="conv"></a><a class="headerlink" href="#prediction-output-conversion-a-class-anchor-id-conv-a" title="Permalink to this headline">¶</a></h1>
+<p>We must ensure the output of our network is in the same Tensor data type (LongTensor) of the <em>rating</em> and <em>businessCategory</em> of <em>dataset</em> as defined by <em>main()</em> function in <em><a class="reference external" href="http://a3main.py">a3main.py</a></em>. This has been achieved by defining <em>convertNetOutput(ratingOutput, categoryOutput)</em> function to process the prediction label data.</p>
+<p>Our model uses sigmoid activation function which outputs <em>FloatTensor</em> data type values between 0 and 1 to predict ratings. In this sentiment analysis task, our model is required to predict whether the review texts are negative or positive. Therefore, the ratings prediction is a binary classification task where it only requires to take on the value of 0 (negative) or 1 (positive). We can thus ensure the prediction label for <em>ratingOutput</em> is in <em>LongTensor</em> data type by applying the following process:</p>
+<ul class="simple">
+<li><p><em>ratingOutput = torch.tensor([1 if x &gt; 0.5 else 0 for x in ratingOutput]).to(device)</em></p></li>
+<li><p>prediction values over 0.5 given by our model will be assessed as positive and assigned 1 (integer64/long data type)</p></li>
+<li><p>prediction values below 0.5 given by our model will be assessed as negative and assigned 0 (integer64/long data type).</p></li>
+</ul>
+<p>The business categories target class labels in our dataset are [0, 1, 2, 3, 4], which represent restaurants, shopping, home services, health and medical, and automotive respectively. Our model uses the <em>CrossEntropyLoss()</em> loss function, which combines log softmax loss function and negative log-likelihood and outputs a probability distribution between 0 and 1. Therefore, the predicted label with the highest probability was assigned to the target class by applying the following conversion process:</p>
+<ul class="simple">
+<li><p><em>categoryOutput = tnn.Softmax(categoryOutput, dim=1)</em></p></li>
+<li><p><em>categoryOutput = torch.argmax(categoryOutput, dim=1)</em>.</p></li>
+</ul>
+<p>Prior to assigning a class label to the model’s prediction <em>tnn.Softmax()</em> function is applied to to ensure the values lie in the range [0, 1] which can be interpreted as a probability distribution. Subsequently, the <em>torch.argmax()</em> function will return the indices of the maximum values of the category prediction output tensor in LongTensor data type representing the label with the highest probability (Paszke et al. 2019).</p>
+</div>
+<div class="section" id="recurrent-neural-network-lstm-a-class-anchor-id-rnn-a">
+<h1>Recurrent Neural Network - LSTM <a class="anchor" id="rnn"></a><a class="headerlink" href="#recurrent-neural-network-lstm-a-class-anchor-id-rnn-a" title="Permalink to this headline">¶</a></h1>
+<p>The recurrent neural network model used to perform this task is a long short-term memory (LSTM) network. This type of network is preferred over simple recurrent networks (SNR) as it can avoid both vanishing and exploding gradients associated with SNRs. LSTM networks are able to learn long range dependencies by using a combination of three internal neural networks: forget, input and output gates. Each of these gates is a feed forward network layer which are made of weights that the network will learn, as well as an activation function (Lane et al. 2019).</p>
+<p>The <em>forget gate</em> is used to determine a ratio between 0 and 1 for each cell unit <span class="math notranslate nohighlight">\(C_{t-1}\)</span>. If the ratio is close to zero, the previous value of the corresponding cell unit will be mostly forgotten. Whereas, a ratio close to one will mostly preserved the previous value. The <em>torch.nn.LSTM()</em> function from <em>PyTorch</em> computes the forget gate function using the following formula:</p>
+<div class="math notranslate nohighlight">
+\[f_t = \sigma (W_f . [h_{t-1}, X_t] + b_f)\]</div>
+<p>The activation function for this gate is a <em>sigmoid</em> activation function, which outputs values between 0 and 1 for each cell unit.</p>
+<p>The next step is to decide what new information we will add to the cell unit (i.e. update values). The update values <span class="math notranslate nohighlight">\((g)\)</span> are between -1 and +1, which are computed using <em>tanh</em>, and the <em>input gate <span class="math notranslate nohighlight">\((i)\)</span></em> is used to determine the ratios by which these update values will be multiplied before being added to the current cell unit values. This is represented by the following mathematical formulas:</p>
+<div class="math notranslate nohighlight">
+\[i_t = \sigma (W_i \cdot [h_{t-1}, x_t] + b_i)\]</div>
+<div class="math notranslate nohighlight">
+\[g_t = tanh(W_g \cdot [h_t-1, x_t] + b_g)\]</div>
+<p>The cell unit value is then updated by combining the input gate (<span class="math notranslate nohighlight">\(i_t\)</span>) and tanh (<span class="math notranslate nohighlight">\(g_t\)</span>) and doing an element-wise multiplication between the forget gate (<span class="math notranslate nohighlight">\(f_t\)</span>) and the sum product of this, as shown by the following formula:</p>
+<div class="math notranslate nohighlight">
+\[c_t = f_t \cdot c_{t-1} + i_t \cdot g_t\]</div>
+<p>The final <em>output</em> gate <span class="math notranslate nohighlight">\((0)\)</span> computes the ratios by which tanh of the cell unit values will be multiplied with the aim of producing the next hidden unit values with the following mathematical formula:</p>
+<div class="math notranslate nohighlight">
+\[o_t =\sigma (W_o \cdot [h_{t-1}, x_t] + b_o)\]</div>
+<div class="math notranslate nohighlight">
+\[h_t = o_t \cdot tanh(c_t)\]</div>
+<p>This type of network allows the cell unit to specialise, with some changing their values regularly while others preserving their state for many iterations.</p>
+</div>
+<div class="section" id="bi-lstm-architecture-a-class-anchor-id-lstm-a">
+<h1>Bi-LSTM architecture <a class="anchor" id="lstm"></a><a class="headerlink" href="#bi-lstm-architecture-a-class-anchor-id-lstm-a" title="Permalink to this headline">¶</a></h1>
+<p>Through experimentation, the following LSTM network architecture consistently produced satisfactory performance:</p>
+<ul class="simple">
+<li><p>batch size = 32</p></li>
+<li><p>bidirectional</p></li>
+<li><p>two recurrent layers, stacked LSTM</p></li>
+<li><p>input size of 300 characters long</p></li>
+<li><p>148 features in each hidden state</p></li>
+<li><p>1 x fully connected hidden layer - 200 x 2 as input and 100 outputs</p></li>
+<li><p>ReLU activation function</p></li>
+<li><p>dropout - 30%</p></li>
+<li><p>1 x fully connected <strong>rating</strong> output layer - 100 inputs, 1 output for binary classification</p></li>
+<li><p>sigmoid activation function to ensure predicted values are between 0 and 1</p></li>
+<li><p>1 x fully connected <strong>category</strong> output layer - 100 inputs, 5 outputs. No activation function follows this layer as we are using <em>CrossEntropyLoss()</em>.</p></li>
+</ul>
+<p>A Bidirectional LSTM network was chosen as it increases the amount of information to the network and provides additional context to the sequence. In Bi-LSTM, two independent networks are created where one gets the sequence in their natural order, while the other gets the sequence in their reverse order. This can help improve performance on sequence classification tasks.</p>
+<p>Depth was added to our model by forming a two layer stacked LSTM. Increasing depth of a network can be viewed as a type of representational optimization. This can provide a model that requires fewer neurons to train and increasing computational efficiency by reducing training execution time.</p>
+<p>Weight initialisation was also used to enhance the performance of our model. Teaching a neural network involves gradually improving network weights to minimize a loss function, resulting in a set of weights that can make optimal predictions (Glassner 2021). This process begins when initial values are assigned to the weights. In practice, weight initialisation has a major impact on the efficiency and performance of the model.</p>
+<p>For Rectified Linear Units (ReLU) it is recommended to use kaiming initialisation as shown by He et al. (2015), where the weights are chosen from Gaussian distribution with mean 0 and standard deviation <span class="math notranslate nohighlight">\(\frac{\sqrt{2}}{\sqrt{n_i}}\)</span>.</p>
+</div>
+<div class="section" id="overfitting-a-class-anchor-id-fit-a">
+<h1>Overfitting <a class="anchor" id="fit"></a><a class="headerlink" href="#overfitting-a-class-anchor-id-fit-a" title="Permalink to this headline">¶</a></h1>
+<p>To avoid our model from overfitting the data, the regularization methods dropout and weight decay were applied. When applying dropout, the dropout layer will temporarily disconnect some of the units inputs and outputs from the previous layer. Once the batch is completed, these units and all of their connections are restored. At the beginning of the next batch, a new random set of units are temporarily removed with this process repeating itself for each epoch. Dropout can delay overfitting as it prevents any unit from over-specialising on the training data.</p>
+<p>Weight decay, also known as L2 regularization, is another method used for regularising machine learning models. This is achieved by adding a penalty term to the loss function, which encourages the network weights to remain small. Weight decay indicates a Gaussian prior over the model parameters resulting in regularisation of the networks complexity (Graves 2011).</p>
+<p>To evaluate the training of our network and obtain an estimate on the model’s performance, we split the input data into a training set and validation set with 80% assigned to training and 20% assigned to validation. Subsequently, we obtain an estimate on the network’s performance by making predictions for the validation set. This allows us to experiment with different hyperparameters and choose the best ones based on their performance on the validation set and help improve generalisation. Once the optimal parameters where found and we were confident that the model can generalise, the network was run on the complete training dataset. More training data helped increase the accuracy, specially when predicting business categories.</p>
+</div>
+<div class="section" id="cost-function-a-class-anchor-id-cost-a">
+<h1>Cost function <a class="anchor" id="cost"></a><a class="headerlink" href="#cost-function-a-class-anchor-id-cost-a" title="Permalink to this headline">¶</a></h1>
+<p>A cost function compares how far off a prediction is from its target in the training data and presents a real value score called the <em>loss</em>. The higher this score, the worse the network’s prediction is. For tasks such as regression, MSE cost is preferred. However, it has a vital flaw in which neuron saturation can occur. This can negatively impact neural networks ability to learn. An alternative cost function is cross-entropy which is well suited to classification tasks. Cross-entropy loss function estimates the probability of a predicted label belonging to the target class label and leads to faster learning as well improved generalisation for classification problems.</p>
+<p>For the binary classification tasks such as rating prediction, the binary cross-entropy loss function can be applied. For implementation in PyTorch, the <em>nn.BCELoss()</em> function is used. To convert the subsequent output probabilities into two discrete classes, we can apply a decision boundary of 0.5. If the predicted probability is above 0.5, the predicted class is 1 (positive); otherwise the class is 0 (negative). The decision boundary value can also be tuned as a hyperparameter to achieve the desired accuracy.</p>
+<p>For a multi-class classification task such as predicting business categories, <em>nn.CrossEntropyLoss()</em> can be used. The outputs of this function can be interpreted as prediction probabilities of belonging to a target class label. Our aim is to have the probability of the correct class to be close to 1, with the other classes being close to 0. The target class with the highest predicted probability can be obtained by using <em>torch.argmax()</em>.</p>
+</div>
+<div class="section" id="optimiser-a-class-anchor-id-optim-a">
+<h1>Optimiser <a class="anchor" id="optim"></a><a class="headerlink" href="#optimiser-a-class-anchor-id-optim-a" title="Permalink to this headline">¶</a></h1>
+<p>The optimisers that were experimented with were the stochastic gradient descent (SGD) with momentum, and the adaptive moment estimation (Adam) optimizer. The performance of both were comparable. However, the speed of learning and the hyperparameters used differed. The network using SGD required the learning rate to be set to 0.07 with momentum of 0.75. On the other hand, the learning rate used for Adam was 0.001. For this particular task, the speed and efficiency of learning with Adam was slightly better compared to SGD with momentum. Therefore, Adam was chosen as the optimiser for the final network.</p>
+<p>To find the optimal learning rate, many different values were applied and evaluated. At the end, the default value of 0.001 for Adam performed the best in conjunction with weight decay 1e-6, as well as all other parameters such as dropout, number of layers, number of hidden unit features etc.</p>
+</div>
+<div class="section" id="results-a-class-anchor-id-results-a">
+<h1>Results <a class="anchor" id="results"></a><a class="headerlink" href="#results-a-class-anchor-id-results-a" title="Permalink to this headline">¶</a></h1>
+<p>Training and fine tuning the hyperparameters were performed by setting <em>trainValSplit</em> to 0.85. This allowed for confidence in the generalisation of our model as we could test the model’s performance on the validation set and adjust hyperparameter values accordingly. To finalise learning on the training dataset, <em>trainValSplit</em> was set to 0.99 to ensure our model is trained on as many data as possible. Increase in training data greatly improves the models overall performance which significantly improved accuracy in classifying business categories.</p>
+<p>The final parameters of the Bi-LSTM model were set as follows:</p>
+<ul class="simple">
+<li><p>number of expected features in the input (input_size) = 300</p></li>
+<li><p>number of features in the hidden state (hidden_size) = 200</p></li>
+<li><p>number of recurrent layers (num_layers) = 2</p></li>
+<li><p>dropout(p=0.2) on the outputs of each LSTM layer except the last layer</p></li>
+<li><p>dropout(p=0.3) prior to FC output layer</p></li>
+<li><p>weight initialisation with kaiming using a normal distribution (mode=’fan_out’, nonlinearity=’relu)</p></li>
+<li><p>batch size = 32</p></li>
+<li><p>Adam optimiser with learning rate 0.001 and weight decay 1e-6</p></li>
+<li><p>training epochs = 11</p></li>
+<li><p>trainValSplit = 0.99.</p></li>
+</ul>
+<p>The following final results were produced:</p>
+<ul class="simple">
+<li><p>loss = 0.083</p></li>
+<li><p>rating incorrect, business category incorrect = 0.60%</p></li>
+<li><p>rating correct, business category incorrect = 9.80%</p></li>
+<li><p>rating incorrect, business category correct = 3.60%</p></li>
+<li><p>rating correct, business category correct = 86.00%</p></li>
+<li><p><strong>weighted score = 88.78%</strong></p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+
+<span class="n">score</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;final_score.png&#39;</span><span class="p">)</span>
+<span class="n">score</span> 
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/ratings_8_0.png" src="_images/ratings_8_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="references-a-class-anchor-id-ref-a">
+<h1>References <a class="anchor" id="ref"></a><a class="headerlink" href="#references-a-class-anchor-id-ref-a" title="Permalink to this headline">¶</a></h1>
+<p>Paszke, A, et al. 2019, PyTorch: An Imperative Style, High-Performance Deep Learning Library, <em>Neural Information Processing Systems</em>, no. 32, pp. 8024–8035, accessed 10 September 2021, <a class="reference external" href="http://papers.neurips.cc/paper/9015-pytorch-an-imperative-style-high-performance-deep-learning-library.pdf">website</a>.</p>
+<p>Lane, H, Howard, C and Hapke, H 2019, <em>Natural Language Processing in Action</em>, Manning Publications, Shelter Island, NY, USA.</p>
+<p>Pennington, J, Socher, R and Manning, CD 2014, <em>GloVe: Global Vectors for Word Representation</em>, <a class="reference external" href="http://nlp.stanford.edu/projects/glove/">website</a>.</p>
+<p>Graves, A 2011, Practical Variational Inference for Neural Networks, <em>Advances in Neural Information Processing Systems 24</em>, pp. 2348-2356, accessed 7 October 2021, <a class="reference external" href="http://proceedings.neurips.cc/paper/2011/file/7eb3c8be3d411e8ebfab08eba5f49632-Paper.pdf">website</a>.</p>
+<p>Glassner, A 2021, <em>Deep Learning: A Visual Approach</em>, No Starch Press, San Francisco, Ca, USA.</p>
+<p>He, K, Zhang, X, Ren, S and Sun, J 2015, Delving deep into rectifiers: Surpassing human-level performance on imagenet classification, <em>Proceedings of the IEEE International Conference on Computer Vision</em>, pp. 1026-1034, accessed 10 September 2021, <a class="reference external" href="http://arxiv.org/pdf/1502.01852.pdf">website</a>.</p>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        
+            
+
+
+
+<div class='prev-next-bottom'>
+    
+
+</div>
+        
+        </div>
+    </div>
+    <footer class="footer">
+    <div class="container">
+      <p>
+        
+          By Mohammad R. Hosseinzadeh<br/>
+        
+            &copy; Copyright 2021.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>

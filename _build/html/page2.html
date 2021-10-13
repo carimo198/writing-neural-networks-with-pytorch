@@ -1,0 +1,766 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bi-LSTM network with PyTorch &#8212; Writing Neural Networks: Language processing with PyTorch</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet" />
+  <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Model execution" href="page3.html" />
+    <link rel="prev" title="Long Short Term Memory (LSTM)" href="page1.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">Writing Neural Networks: Language processing with PyTorch</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="intro.html">
+   Introduction
+  </a>
+ </li>
+</ul>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="page1.html">
+   Long Short Term Memory (LSTM)
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Bi-LSTM network with PyTorch
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="page3.html">
+   Model execution
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="page4.html">
+   References
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/page2.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/carimo198/neural-network-sentiment-analysis"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/carimo198/neural-network-sentiment-analysis/issues/new?title=Issue%20on%20page%20%2Fpage2.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/carimo198/neural-network-sentiment-analysis/master?urlpath=tree/docs/page2.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav" aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#tokenization">
+   Tokenization
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#data-preprocessing">
+   Data preprocessing
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#word-embedding-training-algorithm">
+   Word embedding training algorithm
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#preprocessing-code">
+   Preprocessing code
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#prediction-output-conversion">
+   Prediction output conversion
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#network-architecture">
+   Network architecture
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#overfitting">
+   Overfitting
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#cost-function">
+   Cost function
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#optimiser">
+   Optimiser
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#pytorch-model-code">
+   PyTorch model code
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="bi-lstm-network-with-pytorch">
+<h1>Bi-LSTM network with PyTorch<a class="headerlink" href="#bi-lstm-network-with-pytorch" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="tokenization">
+<h2>Tokenization<a class="headerlink" href="#tokenization" title="Permalink to this headline">¶</a></h2>
+<p>When working with sequences ), each element of the input is referred to as a <strong>token</strong>. In Natural Language Processing (NLP) a token represents a word, or a component of a word. Tokenization is a fundamental step in NLP, where given a character sequence and a defined document unit, it will break up and separate the sequence into discrete elements (tokens). Therefore, tokens can take the form of words, characters, or sub-words. There are libraries such as <em>spaCy</em>, that can provide complex solutions to tokenization.</p>
+<p>However, for this project, the simple Python function <em>split()</em> was used to convert text into words. By default, the <em>split()</em> function splits words on white space.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">tokenise</span><span class="p">(</span><span class="n">sample</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Called before any processing of the text has occurred.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">processed</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">processed</span>  
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="data-preprocessing">
+<h2>Data preprocessing<a class="headerlink" href="#data-preprocessing" title="Permalink to this headline">¶</a></h2>
+<p>The following objects are required for data preparation in sentiment analysis task when using <em>torchtext.data</em>:</p>
+<ul class="simple">
+<li><p><strong>Field</strong>: specifies how to preprocess each data column in our dataset.</p></li>
+<li><p><strong>LabelField</strong>: defines the label in the classification task.</p></li>
+</ul>
+<p>The <em>main()</em> function in <em><a class="reference external" href="http://a3main.py">a3main.py</a></em> script defines our <em>Field</em> and <em>LabelField</em> objects. We have defined the <em>Field</em> object to convert strings to lower case by passing <em>lower=True</em> argument. We have also set <em>include_length=True</em> to allow for dynamic padding by adding the lengths of the reviews to the dataset. In addition to the <em>Field</em> object, a <em>preprocessing()</em> function has been defined in <em><a class="reference external" href="http://student.py">student.py</a></em> to perform the following additional preprocessing of the data using the regular expression package, <em>re</em>:</p>
+<ul class="simple">
+<li><p>remove html mark tags</p></li>
+<li><p>remove non-ascii and digits</p></li>
+<li><p>remove unwanted characters</p></li>
+<li><p>remove extra white spaces.</p></li>
+</ul>
+<p>The <em>preprocessing()</em> function will be called after tokenising but prior to numericalising to perform the text cleaning task.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># function for cleaning texts - to  be used in preprocessing() function</span>
+<span class="k">def</span> <span class="nf">clean_texts</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Clean text of reviews. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># remove html mark tags</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;(&lt;.*?&gt;)&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="c1"># remove newline</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>    
+    <span class="c1">#remove non-ascii and digits</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;(</span><span class="se">\\</span><span class="s2">W|</span><span class="se">\\</span><span class="s2">d)&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>  
+    <span class="c1">#remove other characters </span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;[,.&quot;;!?:\(\)-/$</span><span class="se">\&#39;</span><span class="s1">%`=&gt;&lt;“·^\{\}_&amp;#»«\[\]~|@、´，]+&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="c1">#remove whitespace</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">text</span> 
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">preprocessing</span><span class="p">(</span><span class="n">sample</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Called after tokenising but before numericalising.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># clean the review texts</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="p">[</span><span class="n">clean_texts</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">sample</span>    
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="word-embedding-training-algorithm">
+<h2>Word embedding training algorithm<a class="headerlink" href="#word-embedding-training-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>The model uses Global Vectors for Word Representation (GloVe 6B) unsupervised learning algorithm for obtaining vector representation for words (Pennington et al. 2014). GloVe is used for word embedding for text where it allows for words with similar meaning to have similar representation. The dimension of the vector was chosen to be 300 as the increase in dimension allows the vector to capture more information. For this task, dimension of 300 was found to perform better when we experimented with different dimension values (50, 150, 200, 250). However, it should be noted that increases in dimension size will result in greater computational complexity.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># number of features in the input</span>
+<span class="n">dimension</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="c1"># word embedding training algorithm </span>
+<span class="n">wordVectors</span> <span class="o">=</span> <span class="n">GloVe</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;6B&#39;</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="n">dimension</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="preprocessing-code">
+<h2>Preprocessing code<a class="headerlink" href="#preprocessing-code" title="Permalink to this headline">¶</a></h2>
+<p>Putting all the code together:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">student.py</span>
+
+<span class="sd">Neural Networks and Deep Learning</span>
+
+<span class="sd">Author: Mohammad R. Hosseinzadeh </span>
+
+<span class="sd">You may modify this file however you wish, including creating additional</span>
+<span class="sd">variables, functions, classes, etc., so long as your code runs with the</span>
+<span class="sd">a3main.py file.</span>
+
+<span class="sd">You have been given some default values for the variables stopWords,</span>
+<span class="sd">wordVectors, trainValSplit, batchSize, epochs, and optimiser, as well as</span>
+<span class="sd">a basic tokenise function.  You are encouraged to modify these to improve</span>
+<span class="sd">the performance of your model.</span>
+
+<span class="sd">The variable device may be used to refer to the CPU/GPU being used by PyTorch.</span>
+<span class="sd">You may change this variable in the config.py file.</span>
+
+<span class="sd">You may use GloVe 6B word vectors as found in the torchtext package.</span>
+<span class="sd">------------------------------------------------------------------------------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Import packages</span>
+<span class="kn">import</span> <span class="nn">torch</span> 
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">tnn</span>    
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">toptim</span>  
+<span class="kn">from</span> <span class="nn">torchtext.vocab</span> <span class="kn">import</span> <span class="n">GloVe</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sklearn</span> 
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">torch.nn.init</span> <span class="k">as</span> <span class="nn">init</span> 
+
+<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">device</span> 
+
+<span class="c1">################################################################################</span>
+<span class="c1">##### The following determines the processing of input data (review text) ######</span>
+<span class="c1">################################################################################</span>
+
+<span class="c1"># set seed for reproducibility</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+
+<span class="c1"># Tokenization </span>
+<span class="k">def</span> <span class="nf">tokenise</span><span class="p">(</span><span class="n">sample</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Called before any processing of the text has occurred.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">processed</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">processed</span>
+
+<span class="c1"># function for cleaning texts - to  be used in preprocessing() </span>
+<span class="k">def</span> <span class="nf">clean_texts</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Clean text of reviews. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># remove html mark tags</span>
+    <span class="n">text</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;(&lt;.*?&gt;)&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="c1"># remove newline</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>    
+    <span class="c1">#remove non-ascii and digits</span>
+    <span class="n">text</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;(</span><span class="se">\\</span><span class="s2">W|</span><span class="se">\\</span><span class="s2">d)&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>  
+    <span class="c1">#remove other characters </span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;[,.&quot;;!?:\(\)-/$</span><span class="se">\&#39;</span><span class="s1">%`=&gt;&lt;“·^\{\}_&amp;#»«\[\]~|@、´，]+&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="c1">#remove whitespace</span>
+    <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">text</span>    
+
+<span class="k">def</span> <span class="nf">preprocessing</span><span class="p">(</span><span class="n">sample</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Called after tokenising but before numericalising.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># clean the review texts</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="p">[</span><span class="n">clean_texts</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">sample</span>
+
+<span class="k">def</span> <span class="nf">postprocessing</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">vocab</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Called after numericalising but before vectorising.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">batch</span>
+
+<span class="n">stopWords</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="c1"># number of features in the input</span>
+<span class="n">dimension</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">wordVectors</span> <span class="o">=</span> <span class="n">GloVe</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;6B&#39;</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="n">dimension</span><span class="p">)</span> 
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="prediction-output-conversion">
+<h2>Prediction output conversion<a class="headerlink" href="#prediction-output-conversion" title="Permalink to this headline">¶</a></h2>
+<p>We must ensure the output of our network is in the same Tensor data type (LongTensor) of the <em>rating</em> and <em>businessCategory</em> of <em>dataset</em> as defined by <em>main()</em> function in <em><a class="reference external" href="http://a3main.py">a3main.py</a></em>. This has been achieved by defining <em>convertNetOutput(ratingOutput, categoryOutput)</em> function to process the prediction label data.</p>
+<p>Our model uses sigmoid activation function which outputs <em>FloatTensor</em> data type values between 0 and 1 to predict ratings. In this sentiment analysis task, our model is required to predict whether the review texts are negative or positive. Therefore, the ratings prediction is a binary classification task where it only requires to take on the value of 0 (negative) or 1 (positive). We can thus ensure the prediction label for <em>ratingOutput</em> is in <em>LongTensor</em> data type by applying the following process:</p>
+<ul class="simple">
+<li><p><em>ratingOutput = torch.tensor([1 if x &gt; 0.5 else 0 for x in ratingOutput]).to(device)</em></p></li>
+<li><p>prediction values over 0.5 given by our model will be assessed as positive and assigned 1 (integer64/long data type)</p></li>
+<li><p>prediction values below 0.5 given by our model will be assessed as negative and assigned 0 (integer64/long data type).</p></li>
+</ul>
+<p>The business categories target class labels in our dataset are [0, 1, 2, 3, 4], which represent restaurants, shopping, home services, health and medical, and automotive respectively. Our model uses the <em>CrossEntropyLoss()</em> loss function, which combines log softmax loss function and negative log-likelihood and outputs a probability distribution between 0 and 1. Therefore, the predicted label with the highest probability was assigned to the target class by applying the following conversion process:</p>
+<ul class="simple">
+<li><p><em>categoryOutput = tnn.Softmax(categoryOutput, dim=1)</em></p></li>
+<li><p><em>categoryOutput = torch.argmax(categoryOutput, dim=1)</em>.</p></li>
+</ul>
+<p>Prior to assigning a class label to the model’s prediction <em>tnn.Softmax()</em> function is applied to to ensure the values lie in the range [0, 1] which can be interpreted as a probability distribution. Subsequently, the <em>torch.argmax()</em> function will return the indices of the maximum values of the category prediction output tensor in LongTensor data type representing the label with the highest probability (Paszke et al. 2019).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">################################################################################</span>
+<span class="c1">####### The following determines the processing of label data (ratings) ########</span>
+<span class="c1">################################################################################</span>
+
+<span class="k">def</span> <span class="nf">convertNetOutput</span><span class="p">(</span><span class="n">ratingOutput</span><span class="p">,</span> <span class="n">categoryOutput</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Your model will be assessed on the predictions it makes, which must be in</span>
+<span class="sd">    the same format as the dataset ratings and business categories.  The</span>
+<span class="sd">    predictions must be of type LongTensor, taking the values 0 or 1 for the</span>
+<span class="sd">    rating, and 0, 1, 2, 3, or 4 for the business category.  If your network</span>
+<span class="sd">    outputs a different representation convert the output here.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">## ensure prediction outputs are of LongTensor type</span>
+    <span class="c1">## convert the probabilities to discrete classes</span>
+    <span class="c1"># rating prediction labels - binary, taking value of 0 or 1</span>
+    <span class="n">ratingOutput</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mf">0.5</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ratingOutput</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    
+    <span class="c1"># apply softmax to ensure category prediction labels are in [0, 1] range</span>
+    <span class="n">softmax</span> <span class="o">=</span> <span class="n">tnn</span><span class="o">.</span><span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">categoryOutput</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">categoryOutput</span><span class="p">)</span>
+    
+    <span class="c1"># predict label with the highest probability</span>
+    <span class="n">categoryOutput</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">categoryOutput</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> 
+    
+    <span class="k">return</span> <span class="n">ratingOutput</span><span class="p">,</span> <span class="n">categoryOutput</span>  
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="network-architecture">
+<h2>Network architecture<a class="headerlink" href="#network-architecture" title="Permalink to this headline">¶</a></h2>
+<p>Through experimentation, the following LSTM network architecture consistently produced satisfactory performance:</p>
+<ul class="simple">
+<li><p>batch size = 32</p></li>
+<li><p>bidirectional</p></li>
+<li><p>two recurrent layers, stacked LSTM</p></li>
+<li><p>input size of 300 characters long</p></li>
+<li><p>148 features in each hidden state</p></li>
+<li><p>1 x fully connected hidden layer - 200 x 2 as input and 100 outputs</p></li>
+<li><p>ReLU activation function</p></li>
+<li><p>dropout - 30%</p></li>
+<li><p>1 x fully connected <strong>rating</strong> output layer - 100 inputs, 1 output for binary classification</p></li>
+<li><p>sigmoid activation function to ensure predicted values are between 0 and 1</p></li>
+<li><p>1 x fully connected <strong>category</strong> output layer - 100 inputs, 5 outputs. No activation function follows this layer as we are using <em>CrossEntropyLoss()</em>.</p></li>
+</ul>
+<p>Depth was added to our model by forming a two layer stacked LSTM. Increasing depth of a network can be viewed as a type of representational optimization. This can provide a model that requires fewer neurons to train and increasing computational efficiency by reducing training execution time.</p>
+<p>Weight initialisation was also used to enhance the performance of our model. Teaching a neural network involves gradually improving network weights to minimize a loss function, resulting in a set of weights that can make optimal predictions (Glassner 2021). This process begins when initial values are assigned to the weights. In practice, weight initialisation has a major impact on the efficiency and performance of the model.</p>
+<p>For Rectified Linear Units (ReLU) it is recommended to use kaiming initialisation as shown by He et al. (2015), where the weights are chosen from Gaussian distribution with mean 0 and standard deviation <span class="math notranslate nohighlight">\(\frac{\sqrt{2}}{\sqrt{n_i}}\)</span>.</p>
+</div>
+<div class="section" id="overfitting">
+<h2>Overfitting<a class="headerlink" href="#overfitting" title="Permalink to this headline">¶</a></h2>
+<p>To avoid our model from overfitting the data, the regularization methods dropout and weight decay were applied. When applying dropout, the dropout layer will temporarily disconnect some of the units inputs and outputs from the previous layer. Once the batch is completed, these units and all of their connections are restored. At the beginning of the next batch, a new random set of units are temporarily removed with this process repeating itself for each epoch. Dropout can delay overfitting as it prevents any unit from over-specialising on the training data.</p>
+<p>Weight decay, also known as L2 regularization, is another method used for regularising machine learning models. This is achieved by adding a penalty term to the loss function, which encourages the network weights to remain small. Weight decay indicates a Gaussian prior over the model parameters resulting in regularisation of the networks complexity (Graves 2011).</p>
+<p>To evaluate the training of our network and obtain an estimate on the model’s performance, we split the input data into a training set and validation set with 80% assigned to training and 20% assigned to validation. Subsequently, we obtain an estimate on the network’s performance by making predictions for the validation set. This allows us to experiment with different hyperparameters and choose the best ones based on their performance on the validation set and help improve generalisation. Once the optimal parameters where found and we were confident that the model can generalise, the network was run on the complete training dataset. More training data helped increase the accuracy, specially when predicting business categories.</p>
+</div>
+<div class="section" id="cost-function">
+<h2>Cost function<a class="headerlink" href="#cost-function" title="Permalink to this headline">¶</a></h2>
+<p>A cost function compares how far off a prediction is from its target in the training data and presents a real value score called the <em>loss</em>. The higher this score, the worse the network’s prediction is. For tasks such as regression, MSE cost is preferred. However, it has a vital flaw in which neuron saturation can occur. This can negatively impact neural networks ability to learn. An alternative cost function is cross-entropy which is well suited to classification tasks. Cross-entropy loss function estimates the probability of a predicted label belonging to the target class label and leads to faster learning as well improved generalisation for classification problems.</p>
+<p>For the binary classification tasks such as rating prediction, the binary cross-entropy loss function can be applied. For implementation in PyTorch, the <em>nn.BCELoss()</em> function is used. To convert the subsequent output probabilities into two discrete classes, we can apply a decision boundary of 0.5. If the predicted probability is above 0.5, the predicted class is 1 (positive); otherwise the class is 0 (negative). The decision boundary value can also be tuned as a hyperparameter to achieve the desired accuracy.</p>
+<p>For a multi-class classification task such as predicting business categories, <em>nn.CrossEntropyLoss()</em> can be used. The outputs of this function can be interpreted as prediction probabilities of belonging to a target class label. Our aim is to have the probability of the correct class to be close to 1, with the other classes being close to 0. The target class with the highest predicted probability can be obtained by using <em>torch.argmax()</em>.</p>
+</div>
+<div class="section" id="optimiser">
+<h2>Optimiser<a class="headerlink" href="#optimiser" title="Permalink to this headline">¶</a></h2>
+<p>The optimisers that were experimented with were the stochastic gradient descent (SGD) with momentum, and the adaptive moment estimation (Adam) optimizer. The performance of both were comparable. However, the speed of learning and the hyperparameters used differed. The network using SGD required the learning rate to be set to 0.07 with momentum of 0.75. On the other hand, the learning rate used for Adam was 0.001. For this particular task, the speed and efficiency of learning with Adam was slightly better compared to SGD with momentum. Therefore, Adam was chosen as the optimiser for the final network.</p>
+<p>To find the optimal learning rate, many different values were applied and evaluated. At the end, the default value of 0.001 for Adam performed the best in conjunction with weight decay 1e-6, as well as all other parameters such as dropout, number of layers, number of hidden unit features etc.</p>
+</div>
+<div class="section" id="pytorch-model-code">
+<h2>PyTorch model code<a class="headerlink" href="#pytorch-model-code" title="Permalink to this headline">¶</a></h2>
+<p>Below is code for creating our neural network model using PyTorch:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">################################################################################</span>
+<span class="c1">###################### The following determines the model ######################</span>
+<span class="c1">################################################################################</span>
+
+<span class="k">class</span> <span class="nc">network</span><span class="p">(</span><span class="n">tnn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for creating the neural network.  The input to your network will be a</span>
+<span class="sd">    batch of reviews (in word vector form).  As reviews will have different</span>
+<span class="sd">    numbers of words in them, padding has been added to the end of the reviews</span>
+<span class="sd">    so we can form a batch of reviews of equal length.  Your forward method</span>
+<span class="sd">    should return an output for both the rating and the business category.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># number of expected features in the input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_size</span> <span class="o">=</span> <span class="n">dimension</span>
+        <span class="c1"># number of features in the hidden state h</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span> <span class="o">=</span> <span class="mi">200</span>
+        <span class="c1"># number of recurrent layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="c1"># ReLU activation function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relu</span> <span class="o">=</span> <span class="n">tnn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
+        <span class="c1"># sigmoid activation function </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigmoid</span> <span class="o">=</span> <span class="n">tnn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">()</span>
+        <span class="c1"># dropout layer - 30%</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">tnn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)</span>
+
+        <span class="c1"># define a multi-layer bidirectional LSTM RNN to an input sequence</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lstm</span> <span class="o">=</span> <span class="n">tnn</span><span class="o">.</span><span class="n">LSTM</span><span class="p">(</span><span class="n">input_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_size</span><span class="p">,</span> 
+                            <span class="n">hidden_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">,</span>
+                            <span class="n">num_layers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">,</span> 
+                            <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">bidirectional</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">dropout</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+
+        <span class="c1"># initial fully connected hidden linear layer - * 2 for bidirectional</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layer</span> <span class="o">=</span> <span class="n">tnn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+        <span class="c1"># fully connected output linear layer for ratings - 0,1 class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc1</span> <span class="o">=</span> <span class="n">tnn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># fully connected output linear layer for category - 0,1,2,3,4 class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span> <span class="o">=</span> <span class="n">tnn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+        <span class="c1"># set initial states</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="nb">input</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="nb">input</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="c1"># kaiming weight initialization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">init</span><span class="o">.</span><span class="n">kaiming_normal_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fan_out&#39;</span><span class="p">,</span> <span class="n">nonlinearity</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">init</span><span class="o">.</span><span class="n">kaiming_normal_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fan_out&#39;</span><span class="p">,</span> <span class="n">nonlinearity</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="c1"># pack a Tensor containing padded sequences of varying lengths,</span>
+        <span class="c1"># improves computational efficiency</span>
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+            <span class="n">embedded_packed</span> <span class="o">=</span> <span class="n">tnn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">rnn</span><span class="o">.</span><span class="n">pack_padded_sequence</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="n">length</span><span class="o">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> 
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">embedded_packed</span> <span class="o">=</span> <span class="n">tnn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">rnn</span><span class="o">.</span><span class="n">pack_padded_sequence</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  
+            
+        <span class="c1"># pass packed sequence through LSTM</span>
+        <span class="n">lstm_out</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lstm</span><span class="p">(</span><span class="n">embedded_packed</span><span class="p">)</span>  
+        
+        <span class="c1"># hidden state output</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,:,:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,:,:]),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># propagate through initial hidden layer</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layer</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="c1"># apply ReLU activation</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="c1"># apply dropout</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+        <span class="c1"># rating output - binary classification  </span>
+        <span class="n">rating_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc1</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> 
+        <span class="n">rating_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">rating_out</span><span class="p">)</span>
+
+        <span class="c1"># category output - multiclass classification</span>
+        <span class="n">category_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+       
+        <span class="k">return</span> <span class="n">rating_out</span><span class="p">,</span> <span class="n">category_out</span>
+
+<span class="k">class</span> <span class="nc">loss</span><span class="p">(</span><span class="n">tnn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for creating the loss function.  The labels and outputs from your</span>
+<span class="sd">    network will be passed to the forward method during training.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># binary cross entropy loss function for ratingOutput</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binary_loss</span> <span class="o">=</span> <span class="n">tnn</span><span class="o">.</span><span class="n">BCELoss</span><span class="p">()</span>
+
+        <span class="c1"># cross entropy loss function for categoryOutput</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cross_ent</span> <span class="o">=</span> <span class="n">tnn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratingOutput</span><span class="p">,</span> <span class="n">categoryOutput</span><span class="p">,</span> <span class="n">ratingTarget</span><span class="p">,</span> <span class="n">categoryTarget</span><span class="p">):</span>
+        <span class="c1"># ratingOutput is of float type; convert ratingTarget to float</span>
+        <span class="n">ratingTarget</span> <span class="o">=</span> <span class="n">ratingTarget</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="c1"># remove all the dimensions of size 1</span>
+        <span class="n">ratingOutput</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">ratingOutput</span><span class="p">)</span> 
+
+        <span class="c1"># apply rating loss function</span>
+        <span class="n">rating_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary_loss</span><span class="p">(</span><span class="n">ratingOutput</span><span class="p">,</span> <span class="n">ratingTarget</span><span class="p">)</span>
+
+        <span class="c1"># apply category loss function</span>
+        <span class="n">category_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cross_ent</span><span class="p">(</span><span class="n">categoryOutput</span><span class="p">,</span> <span class="n">categoryTarget</span><span class="p">)</span>
+
+        <span class="c1"># compute total loss    </span>
+        <span class="n">total_loss</span> <span class="o">=</span> <span class="n">rating_loss</span> <span class="o">+</span> <span class="n">category_loss</span> 
+
+        <span class="k">return</span> <span class="n">total_loss</span>  
+
+<span class="n">net</span> <span class="o">=</span> <span class="n">network</span><span class="p">()</span>
+<span class="n">lossFunc</span> <span class="o">=</span> <span class="n">loss</span><span class="p">()</span>   
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">################################################################################</span>
+<span class="c1">################## The following determines training options ###################</span>
+<span class="c1">################################################################################</span>
+
+<span class="n">trainValSplit</span> <span class="o">=</span> <span class="mf">0.99</span>    <span class="c1"># change ratio to assist with design decisions aimed to avoid overfitting to the training data</span>
+<span class="n">batchSize</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="n">epochs</span> <span class="o">=</span> <span class="mi">11</span>
+<span class="n">optimiser</span> <span class="o">=</span> <span class="n">toptim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        
+            
+
+
+
+<div class='prev-next-bottom'>
+    
+    <div id="prev">
+        <a class="left-prev" href="page1.html" title="previous page">
+            <i class="prevnext-label fas fa-angle-left"></i>
+            <div class="prevnext-info">
+                <p class="prevnext-label">previous</p>
+                <p class="prevnext-title">Long Short Term Memory (LSTM)</p>
+            </div>
+        </a>
+    </div>
+     <div id="next">
+        <a class="right-next" href="page3.html" title="next page">
+            <div class="prevnext-info">
+                <p class="prevnext-label">next</p>
+                <p class="prevnext-title">Model execution</p>
+            </div>
+            <i class="prevnext-label fas fa-angle-right"></i>
+        </a>
+     </div>
+
+</div>
+        
+        </div>
+    </div>
+    <footer class="footer">
+    <div class="container">
+      <p>
+        
+          By Mohammad R. Hosseinzadeh<br/>
+        
+            &copy; Copyright 2021.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>

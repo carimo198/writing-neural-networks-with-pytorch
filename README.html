@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Long Short Term Memory (LSTM) &#8212; Writing Neural Networks: Language processing with PyTorch</title>
+    <title>Writing Neural Networks: Language processing with PyTorch &#8212; Writing Neural Networks: Language processing with PyTorch</title>
     
   <link href="_static/css/theme.css" rel="stylesheet" />
   <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -42,8 +42,6 @@
     <script src="_static/copybutton.js"></script>
     <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
     <script >
         const thebe_selector = ".thebe"
@@ -53,8 +51,6 @@
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Bi-LSTM network with PyTorch" href="page2.html" />
-    <link rel="prev" title="Introduction" href="intro.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -90,9 +86,9 @@
   </a>
  </li>
 </ul>
-<ul class="current nav bd-sidenav">
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="page1.html">
    Long Short Term Memory (LSTM)
   </a>
  </li>
@@ -152,9 +148,9 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="_sources/page1.ipynb"><button type="button"
+        <a class="dropdown-buttons" href="_sources/README.md"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.ipynb</button></a>
+                data-placement="left">.md</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
             onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
@@ -172,7 +168,7 @@
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://github.com/carimo198/writing-neural-networks-with-pytorch/issues/new?title=Issue%20on%20page%20%2Fpage1.html&body=Your%20issue%20content%20here."><button
+            href="https://github.com/carimo198/writing-neural-networks-with-pytorch/issues/new?title=Issue%20on%20page%20%2FREADME.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
         
@@ -188,23 +184,6 @@
 
             <!-- Launch buttons -->
 
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
-        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
-    <div class="dropdown-buttons">
-        
-        <a class="binder-button" href="https://mybinder.org/v2/gh/carimo198/writing-neural-networks-with-pytorch/master?urlpath=tree/docs/page1.ipynb"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
-                data-placement="left"><img class="binder-button-logo"
-                    src="_static/images/logo_binder.svg"
-                    alt="Interact on binder">Binder</button></a>
-        
-        
-        
-        
-    </div>
-</div>
-
         </div>
 
         <!-- Table of contents -->
@@ -216,9 +195,16 @@
             <nav id="bd-toc-nav" aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#bidirectional-lstm-bi-lstm">
-   Bidirectional LSTM (bi-LSTM)
+  <a class="reference internal nav-link" href="#building-a-bilstm-model-for-the-analysis-of-business-review-texts">
+   Building a BiLSTM model for the analysis of business review texts
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#report-writing-neural-networks-with-pytorch">
+     Report: Writing neural networks with PyTorch
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -231,33 +217,17 @@
         
               <div>
                 
-  <div class="section" id="long-short-term-memory-lstm">
-<h1>Long Short Term Memory (LSTM)<a class="headerlink" href="#long-short-term-memory-lstm" title="Permalink to this headline">¶</a></h1>
-<p>The recurrent neural network model used to perform this task is a long short-term memory (LSTM) network. This type of network is preferred over simple recurrent networks (SNR) as it can avoid both vanishing and exploding gradients associated with SNRs. LSTM networks are able to learn long range dependencies by using a combination of three internal neural networks: forget, input and output gates. Each of these gates is a feed forward network layer which are made of weights that the network will learn, as well as an activation function (Lane et al. 2019).</p>
-<p>The <em>forget gate</em> is used to determine a ratio between 0 and 1 for each cell unit <span class="math notranslate nohighlight">\(C_{t-1}\)</span>. If the ratio is close to zero, the previous value of the corresponding cell unit will be mostly forgotten. Whereas, a ratio close to one will mostly preserved the previous value. The <em>torch.nn.LSTM()</em> function from <em>PyTorch</em> computes the forget gate function using the following formula:</p>
-<div class="math notranslate nohighlight">
-\[f_t = \sigma (W_f . [h_{t-1}, X_t] + b_f)\]</div>
-<p>The activation function for this gate is a <em>sigmoid</em> activation function, which outputs values between 0 and 1 for each cell unit.</p>
-<p>The next step is to decide what new information we will add to the cell unit (i.e. update values). The update values <span class="math notranslate nohighlight">\((g)\)</span> are between -1 and +1, which are computed using <em>tanh</em>, and the <em>input gate <span class="math notranslate nohighlight">\((i)\)</span></em> is used to determine the ratios by which these update values will be multiplied before being added to the current cell unit values. This is represented by the following mathematical formulas:</p>
-<div class="math notranslate nohighlight">
-\[i_t = \sigma (W_i \cdot [h_{t-1}, x_t] + b_i)\]</div>
-<div class="math notranslate nohighlight">
-\[g_t = tanh(W_g \cdot [h_t-1, x_t] + b_g)\]</div>
-<p>The cell unit value is then updated by combining the input gate (<span class="math notranslate nohighlight">\(i_t\)</span>) and tanh (<span class="math notranslate nohighlight">\(g_t\)</span>) and doing an element-wise multiplication between the forget gate (<span class="math notranslate nohighlight">\(f_t\)</span>) and the sum product of this, as shown by the following formula:</p>
-<div class="math notranslate nohighlight">
-\[c_t = f_t \cdot c_{t-1} + i_t \cdot g_t\]</div>
-<p>The final <em>output</em> gate <span class="math notranslate nohighlight">\((o)\)</span> computes the ratios by which tanh of the cell unit values will be multiplied with the aim of producing the next hidden unit values with the following mathematical formula:</p>
-<div class="math notranslate nohighlight">
-\[o_t =\sigma (W_o \cdot [h_{t-1}, x_t] + b_o)\]</div>
-<div class="math notranslate nohighlight">
-\[h_t = o_t \cdot tanh(c_t)\]</div>
-<p>This type of network allows the cell unit to specialise, with some changing their values regularly while others preserving their state for many iterations.</p>
-<div class="section" id="bidirectional-lstm-bi-lstm">
-<h2>Bidirectional LSTM (bi-LSTM)<a class="headerlink" href="#bidirectional-lstm-bi-lstm" title="Permalink to this headline">¶</a></h2>
-<p>A common variation of the LSTM are bidirectional LSTMs where the input is presented forwards and backwards to two separate recurrent networks, both of which are connected to the same output layer (Graves &amp; Schmidhuber 2005). Bi-LSTM networks provide additional context to the sequence and can improve model performance in classification tasks.</p>
-<div class="figure align-default" id="bi-lstm">
-<a class="reference internal image-reference" href="_images/bi_lstm.png"><img alt="_images/bi_lstm.png" src="_images/bi_lstm.png" style="height: 400px;" /></a>
-<p class="caption"><span class="caption-number">Fig. 1 </span><span class="caption-text">Figure 1: A bi-LSTM. Source: (Pointer 2019)</span><a class="headerlink" href="#bi-lstm" title="Permalink to this image">¶</a></p>
+  <div class="section" id="writing-neural-networks-language-processing-with-pytorch">
+<h1>Writing Neural Networks: Language processing with PyTorch<a class="headerlink" href="#writing-neural-networks-language-processing-with-pytorch" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="building-a-bilstm-model-for-the-analysis-of-business-review-texts">
+<h2>Building a BiLSTM model for the analysis of business review texts<a class="headerlink" href="#building-a-bilstm-model-for-the-analysis-of-business-review-texts" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="report-writing-neural-networks-with-pytorch">
+<h3><a class="reference external" href="https://carimo198.github.io/writing-neural-networks-with-pytorch/intro.html">Report: Writing neural networks with PyTorch</a><a class="headerlink" href="#report-writing-neural-networks-with-pytorch" title="Permalink to this headline">¶</a></h3>
+<p>The purpose of this repository is to demonstrate how to build and implement a biLSTM recurrent neural network with PyTorch.
+I had built the network as part of my Master of Data Science university project for the <em>Neural Network, Deep Learning</em> subject at UNSW, Sydney.
+For this project we were required to write a Pytorch program that learns to read business reviews in text format and predict a rating (positive or negative) associated with each review, as well as a business category (0=Restaurants, 1=Shopping, 2=Home Services, 3=Health &amp; Medical, 4=Automotive). Please refer to <a class="reference external" href="https://carimo198.github.io/writing-neural-networks-with-pytorch/intro.html">report link</a> in which I have outline how the program works with explanation behind my design decisions.</p>
+<p>The file <a class="reference external" href="http://student.py">student.py</a> is completed to run in conjunction with <a class="reference external" href="http://a3main.py">a3main.py</a> by typing the following command line in the terminal:</p>
+<p>python3 <a class="reference external" href="http://a3main.py">a3main.py</a></p>
 </div>
 </div>
 </div>
@@ -291,24 +261,6 @@
 
 <div class='prev-next-bottom'>
     
-    <div id="prev">
-        <a class="left-prev" href="intro.html" title="previous page">
-            <i class="prevnext-label fas fa-angle-left"></i>
-            <div class="prevnext-info">
-                <p class="prevnext-label">previous</p>
-                <p class="prevnext-title">Introduction</p>
-            </div>
-        </a>
-    </div>
-     <div id="next">
-        <a class="right-next" href="page2.html" title="next page">
-            <div class="prevnext-info">
-                <p class="prevnext-label">next</p>
-                <p class="prevnext-title">Bi-LSTM network with PyTorch</p>
-            </div>
-            <i class="prevnext-label fas fa-angle-right"></i>
-        </a>
-     </div>
 
 </div>
         
